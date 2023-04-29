@@ -1,0 +1,39 @@
+name: Build with KernelSU
+
+on:
+  push:
+    branches:
+      - lineage-20
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout kernel source
+      uses: actions/checkout@v2
+    - name: Download KernelSU sources
+      run: git clone https://github.com/tiann/KernelSU
+    - name: Checkout zipper
+      uses: actions/checkout@v2
+      with:
+        repository: yexun1995/AnyKernel3-op5
+        path: zipper
+    - name: Android kernel build
+      uses: lemniskett/android-kernel-actions@master
+      id: build
+      env:
+        NAME: yexun
+      with:
+        arch: arm64
+        compiler: clang/14
+        defconfig: lineage_oneplus5_defconfig
+        image: Image.gz-dtb
+    - name: Release build
+      uses: ncipollo/release-action@v1.12.0
+      with:
+        allowUpdates: true
+        tag: "autobuild"
+        body: For testing only
+        prerelease: "true"
+        artifacts: "zipper/*.zip"
+        token: ${{ secrets.T_Filo }}
