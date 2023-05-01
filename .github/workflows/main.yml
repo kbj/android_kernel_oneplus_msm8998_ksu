@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - lineage-20
+  workflow_dispatch: 
 
 jobs:
   build:
+    if: github.event.repository.owner.id == github.event.sender.id
     runs-on: ubuntu-latest
     steps:
     - name: Checkout kernel source
